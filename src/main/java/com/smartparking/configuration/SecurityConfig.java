@@ -2,7 +2,6 @@ package com.smartparking.configuration;
 
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
-import org.springframework.http.HttpMethod;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.config.annotation.web.configurers.AbstractHttpConfigurer;
@@ -17,12 +16,13 @@ import lombok.experimental.FieldDefaults;
 public class SecurityConfig {
 
     // danh sách các end point được phép public
-    String[] PUBLIC_ENDPOINT = {"/auth/**"};
+    String[] PUBLIC_ENDPOINT = {"/auth/**", "/v3/api-docs/**", "/v3/api-docs.yaml", "/swagger-ui/**", "/swagger-ui.html"
+    };
 
     @Bean
     public SecurityFilterChain filterChain(HttpSecurity httpSecurity) throws Exception {
         // cấu hình các endpoint public
-        httpSecurity.authorizeHttpRequests(request -> request.requestMatchers(HttpMethod.POST, PUBLIC_ENDPOINT)
+        httpSecurity.authorizeHttpRequests(request -> request.requestMatchers(PUBLIC_ENDPOINT)
                 .permitAll()
                 .anyRequest()
                 .authenticated());

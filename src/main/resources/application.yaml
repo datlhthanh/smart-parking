@@ -13,5 +13,16 @@ spring:
       ddl-auto: update
     show-sql: true
 
+springdoc:
+  swagger-ui:
+    path: /swagger-ui.html
+  api-docs:
+    path: /v3/api-docs
+  open-api:
+    info:
+      title: Smart Parking API
+      description: API documentation for the Smart Parking system.
+      version: 1.0.0
+
 jwt:
   signerKey: "1TjXchw5FloESb63Kc+DFhTARvpWL4jUGCwfGWxuG5SIf/1y/LgJxHnMqaF6A/ij"
