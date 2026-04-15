@@ -3,12 +3,10 @@ package com.smartparking.exception;
 import com.smartparking.enums.ErrorCode;
 
 import lombok.Getter;
-import lombok.Setter;
 
 @Getter
-@Setter
 public class AppException extends RuntimeException {
-    private ErrorCode errorCode; // lưu mã lỗi để controller advice xử lý
+    ErrorCode errorCode; // lưu mã lỗi để controller advice xử lý
 
     // khi tạo AppException, truyền vào ErrorCode
     public AppException(ErrorCode errorCode) {
