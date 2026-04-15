@@ -1,11 +1,13 @@
 package com.smartparking.entity;
 
-import com.smartparking.enums.BookingStatus;
+import java.time.LocalDateTime;
+
 import jakarta.persistence.*;
+
+import com.smartparking.enums.BookingStatus;
+
 import lombok.*;
 import lombok.experimental.FieldDefaults;
-
-import java.time.LocalDateTime;
 
 @Entity
 @Table(name = "bookings")

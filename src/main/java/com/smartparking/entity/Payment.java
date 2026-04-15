@@ -1,8 +1,10 @@
 package com.smartparking.entity;
 
+import jakarta.persistence.*;
+
 import com.smartparking.enums.PaymentMethod;
 import com.smartparking.enums.PaymentStatus;
-import jakarta.persistence.*;
+
 import lombok.*;
 import lombok.experimental.FieldDefaults;
 
