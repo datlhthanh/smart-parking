@@ -1,11 +1,5 @@
 package com.smartparking.service;
 
-import java.util.Set;
-
-import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
-import org.springframework.security.crypto.password.PasswordEncoder;
-import org.springframework.stereotype.Service;
-
 import com.smartparking.dto.request.LoginRequest;
 import com.smartparking.dto.request.RegisterRequest;
 import com.smartparking.dto.response.UserResponse;
@@ -18,11 +12,14 @@ import com.smartparking.exception.AppException;
 import com.smartparking.mapper.UserMapper;
 import com.smartparking.repository.RoleRepository;
 import com.smartparking.repository.UserRepository;
-
 import lombok.AccessLevel;
 import lombok.RequiredArgsConstructor;
 import lombok.experimental.FieldDefaults;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.security.crypto.password.PasswordEncoder;
+import org.springframework.stereotype.Service;
+
+import java.util.Set;
 
 @Service
 @RequiredArgsConstructor
@@ -33,6 +30,8 @@ public class UserService {
     RoleRepository roleRepository;
 
     UserMapper userMapper;
+
+    PasswordEncoder passwordEncoder;
 
     public UserResponse register(RegisterRequest request) {
         // kiểm tra tổn tại: email, phone number
@@ -51,8 +50,6 @@ public class UserService {
         // dùng mapper để tạo user mới, set các trường từ request
         User user = userMapper.toUser(request);
 
-        PasswordEncoder passwordEncoder = new BCryptPasswordEncoder(10);
-
         // set status mặc định là ACTIVE, set role là USER
         user.setPassword(passwordEncoder.encode(request.getPassword()));
         user.setStatus(UserStatus.ACTIVE);
@@ -69,7 +66,7 @@ public class UserService {
                 .orElseThrow(() -> new AppException(ErrorCode.INVALID_CREDENTIALS));
 
         // kiểm tra password có khớp không
-        if (!user.getPassword().equals(request.getPassword())) {
+        if (!passwordEncoder.matches(request.getPassword(), user.getPassword())) {
             throw new AppException(ErrorCode.INVALID_CREDENTIALS);
         }
 
