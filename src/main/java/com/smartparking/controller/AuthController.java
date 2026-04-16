@@ -8,10 +8,7 @@ import org.springframework.web.bind.annotation.RestController;
 import com.smartparking.dto.request.IntrospectRequest;
 import com.smartparking.dto.request.LoginRequest;
 import com.smartparking.dto.request.RegisterRequest;
-import com.smartparking.dto.response.ApiResponse;
-import com.smartparking.dto.response.IntrospectResponse;
-import com.smartparking.dto.response.LoginResponse;
-import com.smartparking.dto.response.UserResponse;
+import com.smartparking.dto.response.*;
 import com.smartparking.service.AuthenticationService;
 
 import lombok.AccessLevel;
@@ -27,10 +24,13 @@ public class AuthController {
     AuthenticationService authenticationService;
 
     @PostMapping("/register")
-    ApiResponse<UserResponse> register(@RequestBody RegisterRequest request) {
+    ApiResponse<RegisterResponse> register(@RequestBody RegisterRequest request) {
         var result = authenticationService.register(request);
 
-        return ApiResponse.<UserResponse>builder().result(result).build();
+        return ApiResponse.<RegisterResponse>builder()
+                .message("User registered successfully.")
+                .result(result)
+                .build();
     }
 
     @PostMapping("/login")

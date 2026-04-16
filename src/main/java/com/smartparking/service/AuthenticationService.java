@@ -22,7 +22,7 @@ import com.smartparking.dto.request.LoginRequest;
 import com.smartparking.dto.request.RegisterRequest;
 import com.smartparking.dto.response.IntrospectResponse;
 import com.smartparking.dto.response.LoginResponse;
-import com.smartparking.dto.response.UserResponse;
+import com.smartparking.dto.response.RegisterResponse;
 import com.smartparking.entity.Role;
 import com.smartparking.entity.User;
 import com.smartparking.enums.ErrorCode;
@@ -55,7 +55,7 @@ public class AuthenticationService {
     @Value("${jwt.signerKey}")
     String SIGNER_KEY;
 
-    public UserResponse register(RegisterRequest request) {
+    public RegisterResponse register(RegisterRequest request) {
         // kiểm tra tổn tại: email, phone number
         if (userRepository.existsByEmail(request.getEmail())) {
             throw new AppException(ErrorCode.EMAIL_EXISTED);
@@ -70,7 +70,7 @@ public class AuthenticationService {
                 .orElseThrow(() -> new AppException(ErrorCode.ROLE_NOT_FOUND));
 
         // dùng mapper để tạo user mới, set các trường từ request
-        User user = userMapper.toUser(request);
+        User user = userMapper.toRegisterUser(request);
 
         // set status mặc định là ACTIVE, set role là USER
         user.setPassword(passwordEncoder.encode(request.getPassword()));
@@ -78,7 +78,7 @@ public class AuthenticationService {
         user.setRoles(Set.of(userRole));
 
         // lưu xuống DB
-        return userMapper.toUserResponse(userRepository.save(user));
+        return userMapper.toRegisterResponse(userRepository.save(user));
     }
 
     public LoginResponse login(LoginRequest request) {
