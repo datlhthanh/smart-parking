@@ -1,12 +1,14 @@
 package com.smartparking.entity;
 
-import com.smartparking.enums.UserStatus;
-import jakarta.persistence.*;
-import lombok.*;
-import lombok.experimental.FieldDefaults;
-
 import java.util.HashSet;
 import java.util.Set;
+
+import jakarta.persistence.*;
+
+import com.smartparking.enums.UserStatus;
+
+import lombok.*;
+import lombok.experimental.FieldDefaults;
 
 @Entity // đánh dấu đây là entity, sẽ map với bảng trong DB
 @Table(name = "users") // map với bảng users

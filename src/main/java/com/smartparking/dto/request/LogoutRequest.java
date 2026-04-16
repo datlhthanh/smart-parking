@@ -1,7 +1,5 @@
 package com.smartparking.dto.request;
 
-import java.util.Set;
-
 import lombok.*;
 import lombok.experimental.FieldDefaults;
 
@@ -10,9 +8,6 @@ import lombok.experimental.FieldDefaults;
 @NoArgsConstructor
 @AllArgsConstructor
 @FieldDefaults(level = AccessLevel.PRIVATE)
-public class UserUpdateRequest {
-    String password;
-    String fullName;
-    String phoneNumber;
-    Set<String> roles;
+public class LogoutRequest {
+    String token;
 }

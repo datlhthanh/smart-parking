@@ -1,10 +1,11 @@
 package com.smartparking.repository;
 
-import com.smartparking.entity.User;
+import java.util.Optional;
+
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
 
-import java.util.Optional;
+import com.smartparking.entity.User;
 
 @Repository
 // <User, String> User là kiểu entity, String là kiểu dữ liệu của khóa chính (id)

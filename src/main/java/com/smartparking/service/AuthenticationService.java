@@ -1,5 +1,16 @@
 package com.smartparking.service;
 
+import java.text.ParseException;
+import java.time.Instant;
+import java.time.LocalDateTime;
+import java.time.temporal.ChronoUnit;
+import java.util.*;
+
+import org.springframework.beans.factory.annotation.Value;
+import org.springframework.security.crypto.password.PasswordEncoder;
+import org.springframework.stereotype.Service;
+import org.springframework.util.CollectionUtils;
+
 import com.nimbusds.jose.*;
 import com.nimbusds.jose.crypto.MACSigner;
 import com.nimbusds.jose.crypto.MACVerifier;
@@ -10,6 +21,7 @@ import com.smartparking.dto.response.IntrospectResponse;
 import com.smartparking.dto.response.LoginResponse;
 import com.smartparking.dto.response.RegisterResponse;
 import com.smartparking.entity.ForgotPasswordToken;
+import com.smartparking.entity.InvalidatedToken;
 import com.smartparking.entity.Role;
 import com.smartparking.entity.User;
 import com.smartparking.enums.ErrorCode;
@@ -18,27 +30,16 @@ import com.smartparking.enums.UserStatus;
 import com.smartparking.exception.AppException;
 import com.smartparking.mapper.UserMapper;
 import com.smartparking.repository.ForgotPasswordTokenRepository;
+import com.smartparking.repository.InvalidatedRepository;
 import com.smartparking.repository.RoleRepository;
 import com.smartparking.repository.UserRepository;
 import com.smartparking.service.validator.UserValidator;
+
 import lombok.AccessLevel;
 import lombok.RequiredArgsConstructor;
 import lombok.experimental.FieldDefaults;
 import lombok.experimental.NonFinal;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.beans.factory.annotation.Value;
-import org.springframework.security.crypto.password.PasswordEncoder;
-import org.springframework.stereotype.Service;
-import org.springframework.util.CollectionUtils;
-
-import java.text.ParseException;
-import java.time.Instant;
-import java.time.LocalDateTime;
-import java.time.temporal.ChronoUnit;
-import java.util.Date;
-import java.util.Random;
-import java.util.Set;
-import java.util.StringJoiner;
 
 @Service
 @RequiredArgsConstructor
@@ -48,6 +49,7 @@ public class AuthenticationService {
     UserRepository userRepository;
     RoleRepository roleRepository;
     ForgotPasswordTokenRepository forgotPasswordTokenRepository;
+    InvalidatedRepository invalidatedRepository;
 
     UserValidator userValidator;
     EmailService emailService;
@@ -110,6 +112,7 @@ public class AuthenticationService {
                 .issuer("smart-parking")
                 .issueTime(new Date())
                 .expirationTime(new Date(expiration.toEpochMilli()))
+                .jwtID(UUID.randomUUID().toString())
                 .claim("roles", roleScope(user))
                 .build();
 
@@ -150,7 +153,7 @@ public class AuthenticationService {
         return IntrospectResponse.builder().validated(isValid).build();
     }
 
-    private void verifyToken(String token) throws JOSEException, ParseException {
+    private SignedJWT verifyToken(String token) throws JOSEException, ParseException {
         JWSVerifier jwsVerifier = new MACVerifier(SIGNER_KEY.getBytes());
 
         SignedJWT signedJWT = SignedJWT.parse(token);
@@ -160,11 +163,17 @@ public class AuthenticationService {
         var expiryTime = signedJWT.getJWTClaimsSet().getExpirationTime();
 
         if (!(verified && expiryTime.after(new Date()))) throw new AppException(ErrorCode.UNAUTHENTICATED);
+
+        if (invalidatedRepository.existsById(signedJWT.getJWTClaimsSet().getJWTID()))
+            throw new AppException(ErrorCode.UNAUTHENTICATED);
+
+        return signedJWT;
     }
 
     public void forgotPassword(ForgotPasswordRequest request) {
         // 1. tìm User
-        User user = userRepository.findByEmail(request.getEmail())
+        User user = userRepository
+                .findByEmail(request.getEmail())
                 .orElseThrow(() -> new AppException(ErrorCode.USER_NOT_FOUND));
 
         // 2. tạo mã OTP ngẫu nhiên 6 số
@@ -184,7 +193,8 @@ public class AuthenticationService {
 
     public void resetPassword(ResetPasswordRequest request) {
         // 1. tìm User
-        User user = userRepository.findByEmail(request.getEmail())
+        User user = userRepository
+                .findByEmail(request.getEmail())
                 .orElseThrow(() -> new AppException(ErrorCode.USER_NOT_FOUND));
 
         // 2. tìm Token xem có khớp với User và OTP người dùng nhập không
@@ -203,5 +213,22 @@ public class AuthenticationService {
 
         // 5. xóa mã đó đi (để không bị dùng lại)
         forgotPasswordTokenRepository.delete(token);
+    }
+
+    public void logout(LogoutRequest request) throws ParseException, JOSEException {
+        // 1. xác thực token (nếu token không hợp lệ sẽ ném exception)
+        var signToken = verifyToken(request.getToken());
+
+        // 2. lấy JWT ID (jit) và expiration time từ token
+        String jit = signToken.getJWTClaimsSet().getJWTID();
+        Date exp = signToken.getJWTClaimsSet().getExpirationTime();
+
+        // 3. 5ạo một bản ghi mới đánh dấu token này là "đã bị vô hiệu hóa"
+        InvalidatedToken invalidatedToken =
+                InvalidatedToken.builder().id(jit).expiryTime(exp).build();
+
+        // 5. lưu token này vào cơ sở dữ liệu
+        // khi có request mới hệ thống sẽ kiểm tra xem token này có trong danh sách bị vô hiệu hóa không
+        invalidatedRepository.save(invalidatedToken);
     }
 }

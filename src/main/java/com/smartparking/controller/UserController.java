@@ -1,11 +1,12 @@
 package com.smartparking.controller;
 
-import com.smartparking.dto.request.UserUpdateRequest;
-import lombok.extern.slf4j.Slf4j;
+import java.util.List;
+
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.bind.annotation.*;
 
 import com.smartparking.dto.request.UserCreationRequest;
+import com.smartparking.dto.request.UserUpdateRequest;
 import com.smartparking.dto.response.ApiResponse;
 import com.smartparking.dto.response.UserResponse;
 import com.smartparking.service.UserService;
@@ -13,8 +14,7 @@ import com.smartparking.service.UserService;
 import lombok.AccessLevel;
 import lombok.RequiredArgsConstructor;
 import lombok.experimental.FieldDefaults;
-
-import java.util.List;
+import lombok.extern.slf4j.Slf4j;
 
 @RestController
 @RequestMapping("/users")
@@ -52,16 +52,14 @@ public class UserController {
     }
 
     @GetMapping("/myInfo")
-    ApiResponse<UserResponse> getMyInfo(){
+    ApiResponse<UserResponse> getMyInfo() {
         var result = userService.getMyInfo();
 
-        return ApiResponse.<UserResponse>builder()
-                .result(result)
-                .build();
+        return ApiResponse.<UserResponse>builder().result(result).build();
     }
 
     @GetMapping
-    ApiResponse<List<UserResponse>> getUsers(){
+    ApiResponse<List<UserResponse>> getUsers() {
         var authentication = SecurityContextHolder.getContext().getAuthentication();
 
         authentication.getAuthorities().forEach(grantedAuthority -> log.info(grantedAuthority.getAuthority()));
@@ -75,9 +73,8 @@ public class UserController {
                 .build();
     }
 
-
     @GetMapping("/{userId}")
-    ApiResponse<UserResponse> getUser(@PathVariable("userId") String userId){
+    ApiResponse<UserResponse> getUser(@PathVariable("userId") String userId) {
 
         return ApiResponse.<UserResponse>builder()
                 .result(userService.getUser(userId))
