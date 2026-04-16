@@ -5,12 +5,11 @@ import com.nimbusds.jose.crypto.MACSigner;
 import com.nimbusds.jose.crypto.MACVerifier;
 import com.nimbusds.jwt.JWTClaimsSet;
 import com.nimbusds.jwt.SignedJWT;
-import com.smartparking.dto.request.IntrospectRequest;
-import com.smartparking.dto.request.LoginRequest;
-import com.smartparking.dto.request.RegisterRequest;
+import com.smartparking.dto.request.*;
 import com.smartparking.dto.response.IntrospectResponse;
 import com.smartparking.dto.response.LoginResponse;
 import com.smartparking.dto.response.RegisterResponse;
+import com.smartparking.entity.ForgotPasswordToken;
 import com.smartparking.entity.Role;
 import com.smartparking.entity.User;
 import com.smartparking.enums.ErrorCode;
@@ -18,6 +17,7 @@ import com.smartparking.enums.RoleName;
 import com.smartparking.enums.UserStatus;
 import com.smartparking.exception.AppException;
 import com.smartparking.mapper.UserMapper;
+import com.smartparking.repository.ForgotPasswordTokenRepository;
 import com.smartparking.repository.RoleRepository;
 import com.smartparking.repository.UserRepository;
 import com.smartparking.service.validator.UserValidator;
@@ -33,8 +33,10 @@ import org.springframework.util.CollectionUtils;
 
 import java.text.ParseException;
 import java.time.Instant;
+import java.time.LocalDateTime;
 import java.time.temporal.ChronoUnit;
 import java.util.Date;
+import java.util.Random;
 import java.util.Set;
 import java.util.StringJoiner;
 
@@ -45,10 +47,12 @@ import java.util.StringJoiner;
 public class AuthenticationService {
     UserRepository userRepository;
     RoleRepository roleRepository;
-
-    UserMapper userMapper;
+    ForgotPasswordTokenRepository forgotPasswordTokenRepository;
 
     UserValidator userValidator;
+    EmailService emailService;
+
+    UserMapper userMapper;
 
     PasswordEncoder passwordEncoder;
 
@@ -156,5 +160,48 @@ public class AuthenticationService {
         var expiryTime = signedJWT.getJWTClaimsSet().getExpirationTime();
 
         if (!(verified && expiryTime.after(new Date()))) throw new AppException(ErrorCode.UNAUTHENTICATED);
+    }
+
+    public void forgotPassword(ForgotPasswordRequest request) {
+        // 1. tìm User
+        User user = userRepository.findByEmail(request.getEmail())
+                .orElseThrow(() -> new AppException(ErrorCode.USER_NOT_FOUND));
+
+        // 2. tạo mã OTP ngẫu nhiên 6 số
+        String otp = String.format("%06d", new Random().nextInt(999999));
+
+        // 3. lưu vào DB (hạn là 5 phút)
+        ForgotPasswordToken token = ForgotPasswordToken.builder()
+                .otp(otp)
+                .user(user)
+                .expiryTime(LocalDateTime.now().plusMinutes(5))
+                .build();
+        forgotPasswordTokenRepository.save(token);
+
+        // 4. gửi Email
+        emailService.sendOtpEmail(user.getEmail(), otp);
+    }
+
+    public void resetPassword(ResetPasswordRequest request) {
+        // 1. tìm User
+        User user = userRepository.findByEmail(request.getEmail())
+                .orElseThrow(() -> new AppException(ErrorCode.USER_NOT_FOUND));
+
+        // 2. tìm Token xem có khớp với User và OTP người dùng nhập không
+        ForgotPasswordToken token = forgotPasswordTokenRepository
+                .findByUserAndOtp(user, request.getOtp())
+                .orElseThrow(() -> new AppException(ErrorCode.INVALID_OTP));
+
+        // 3. kiểm tra xem mã đã hết hạn chưa
+        if (token.getExpiryTime().isBefore(LocalDateTime.now())) {
+            throw new AppException(ErrorCode.EXPIRED_OTP);
+        }
+
+        // 4. update mật khẩu mới
+        user.setPassword(passwordEncoder.encode(request.getNewPassword()));
+        userRepository.save(user);
+
+        // 5. xóa mã đó đi (để không bị dùng lại)
+        forgotPasswordTokenRepository.delete(token);
     }
 }

@@ -11,6 +11,8 @@ import lombok.experimental.FieldDefaults;
 @FieldDefaults(level = AccessLevel.PRIVATE, makeFinal = true)
 public enum ErrorCode {
     UNCATEGORIZED_EXCEPTION(9999, "Uncategorized Exception.", HttpStatus.INTERNAL_SERVER_ERROR),
+    INVALID_OTP(9001, "Invalid OTP.", HttpStatus.BAD_REQUEST),
+    EXPIRED_OTP(9002, "Expired OTP.", HttpStatus.BAD_REQUEST),
     EMAIL_EXISTED(1001, "Email already exists.", HttpStatus.BAD_REQUEST),
     PHONE_EXISTED(1002, "Phone number already exists.", HttpStatus.BAD_REQUEST),
     USER_NOT_FOUND(1003, "User not found.", HttpStatus.NOT_FOUND),
