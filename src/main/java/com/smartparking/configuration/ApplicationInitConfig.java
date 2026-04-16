@@ -1,5 +1,12 @@
 package com.smartparking.configuration;
 
+import java.util.Set;
+
+import org.springframework.boot.ApplicationRunner;
+import org.springframework.context.annotation.Bean;
+import org.springframework.context.annotation.Configuration;
+import org.springframework.security.crypto.password.PasswordEncoder;
+
 import com.smartparking.entity.Role;
 import com.smartparking.entity.User;
 import com.smartparking.enums.ErrorCode;
@@ -8,12 +15,6 @@ import com.smartparking.enums.UserStatus;
 import com.smartparking.exception.AppException;
 import com.smartparking.repository.RoleRepository;
 import com.smartparking.repository.UserRepository;
-import org.springframework.boot.ApplicationRunner;
-import org.springframework.context.annotation.Bean;
-import org.springframework.context.annotation.Configuration;
-import org.springframework.security.crypto.password.PasswordEncoder;
-
-import java.util.Set;
 
 @Configuration
 public class ApplicationInitConfig {
@@ -35,7 +36,8 @@ public class ApplicationInitConfig {
                         .build());
             }
             if (userRepository.findByEmail("admin@gmail.com").isEmpty()) {
-                Role adminRole = roleRepository.findByName(RoleName.ADMIN.name())
+                Role adminRole = roleRepository
+                        .findByName(RoleName.ADMIN.name())
                         .orElseThrow(() -> new AppException(ErrorCode.ROLE_NOT_FOUND));
 
                 userRepository.save(User.builder()

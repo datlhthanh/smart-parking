@@ -22,17 +22,16 @@ public class SecurityConfig {
     };
 
     @Bean
-    public SecurityFilterChain filterChain(HttpSecurity httpSecurity) throws Exception {
+    public SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
+
         // cấu hình các endpoint public
-        httpSecurity.authorizeHttpRequests(request -> request.requestMatchers(PUBLIC_ENDPOINT)
-                .permitAll()
-                .anyRequest()
-                .authenticated());
+        http.csrf(AbstractHttpConfigurer::disable) // tắt csrf vì cái này sida quá rồi
+                .authorizeHttpRequests(request -> request.requestMatchers(PUBLIC_ENDPOINT)
+                        .permitAll()
+                        .anyRequest()
+                        .authenticated());
 
-        // tắt csrf vì cái này sida quá rồi
-        httpSecurity.csrf(AbstractHttpConfigurer::disable);
-
-        return httpSecurity.build();
+        return http.build();
     }
 
     @Bean

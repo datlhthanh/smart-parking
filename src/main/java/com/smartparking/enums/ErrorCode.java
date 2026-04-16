@@ -14,7 +14,8 @@ public enum ErrorCode {
     EMAIL_EXISTED(1001, "Email already exists.", HttpStatus.BAD_REQUEST),
     PHONE_EXISTED(1002, "Phone number already exists.", HttpStatus.BAD_REQUEST),
     USER_NOT_FOUND(1003, "User not found.", HttpStatus.NOT_FOUND),
-    INVALID_CREDENTIALS(1003, "Wrong email or password, try again.", HttpStatus.UNAUTHORIZED),
+    INVALID_CREDENTIALS(1004, "Wrong email or password, try again.", HttpStatus.UNAUTHORIZED),
+    UNAUTHENTICATED(1005, "Unauthenticated.", HttpStatus.UNAUTHORIZED),
     ROLE_NOT_FOUND(2001, "Role not found.", HttpStatus.NOT_FOUND),
     ;
 

@@ -1,9 +1,6 @@
 package com.smartparking.dto.response;
 
-import java.util.Set;
-
 import com.fasterxml.jackson.annotation.JsonInclude;
-import com.smartparking.enums.UserStatus;
 
 import lombok.*;
 import lombok.experimental.FieldDefaults;
@@ -14,12 +11,6 @@ import lombok.experimental.FieldDefaults;
 @AllArgsConstructor
 @FieldDefaults(level = AccessLevel.PRIVATE)
 @JsonInclude(JsonInclude.Include.NON_NULL)
-public class UserResponse {
-    String id;
-    String email;
-    String password;
-    String fullName;
-    String phoneNumber;
-    UserStatus status;
-    Set<RoleResponse> roles;
+public class IntrospectResponse {
+    boolean validated;
 }
