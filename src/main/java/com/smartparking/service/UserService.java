@@ -17,10 +17,12 @@ import lombok.AccessLevel;
 import lombok.RequiredArgsConstructor;
 import lombok.experimental.FieldDefaults;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
 import java.util.HashSet;
+import java.util.List;
 import java.util.Set;
 
 @Service
@@ -72,5 +74,27 @@ public class UserService {
 
     public void deleteUser(String id) {
         userRepository.deleteById(id);
+    }
+
+    public UserResponse getMyInfo(){
+        var context = SecurityContextHolder.getContext();
+        String email = context.getAuthentication().getName();
+
+        log.info("email: {}", email);
+
+        User user = userRepository.findByEmail(email)
+                .orElseThrow(() -> new AppException(ErrorCode.USER_NOT_FOUND));
+
+        return userMapper.toUserResponse(user);
+    }
+
+    public List<UserResponse> getUsers(){
+        return userRepository.findAll().stream()
+                .map(userMapper::toUserResponse).toList();
+    }
+
+    public UserResponse getUser(String id) {
+        return userMapper.toUserResponse(userRepository.findById(id)
+                .orElseThrow(() -> new AppException(ErrorCode.USER_NOT_FOUND)));
     }
 }

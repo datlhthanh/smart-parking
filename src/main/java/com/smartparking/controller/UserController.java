@@ -1,6 +1,8 @@
 package com.smartparking.controller;
 
 import com.smartparking.dto.request.UserUpdateRequest;
+import lombok.extern.slf4j.Slf4j;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.bind.annotation.*;
 
 import com.smartparking.dto.request.UserCreationRequest;
@@ -12,10 +14,13 @@ import lombok.AccessLevel;
 import lombok.RequiredArgsConstructor;
 import lombok.experimental.FieldDefaults;
 
+import java.util.List;
+
 @RestController
 @RequestMapping("/users")
 @RequiredArgsConstructor
 @FieldDefaults(level = AccessLevel.PRIVATE, makeFinal = true)
+@Slf4j
 public class UserController {
     UserService userService;
 
@@ -44,5 +49,34 @@ public class UserController {
         userService.deleteUser(userId);
 
         return ApiResponse.<Void>builder().message("User deleted successfully.").build();
+    }
+
+    @GetMapping("/myInfo")
+    ApiResponse<UserResponse> getMyInfo(){
+        var result = userService.getMyInfo();
+
+        return ApiResponse.<UserResponse>builder()
+                .result(result)
+                .build();
+    }
+
+    @GetMapping
+    ApiResponse<List<UserResponse>> getUsers(){
+        var authentication = SecurityContextHolder.getContext().getAuthentication();
+
+        authentication.getAuthorities().forEach(grantedAuthority -> log.info(grantedAuthority.getAuthority()));
+
+        return ApiResponse.<List<UserResponse>>builder()
+                .result(userService.getUsers())
+                .build();
+    }
+
+
+    @GetMapping("/{userId}")
+    ApiResponse<UserResponse> getUser(@PathVariable("userId") String userId){
+
+        return ApiResponse.<UserResponse>builder()
+                .result(userService.getUser(userId))
+                .build();
     }
 }
