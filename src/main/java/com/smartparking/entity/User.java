@@ -1,18 +1,12 @@
 package com.smartparking.entity;
 
-import java.time.LocalDateTime;
-import java.util.HashSet;
-import java.util.Set;
-
-import jakarta.persistence.*;
-
-import org.hibernate.annotations.CreationTimestamp;
-import org.hibernate.annotations.UpdateTimestamp;
-
 import com.smartparking.enums.UserStatus;
-
+import jakarta.persistence.*;
 import lombok.*;
 import lombok.experimental.FieldDefaults;
+
+import java.util.HashSet;
+import java.util.Set;
 
 @Entity // đánh dấu đây là entity, sẽ map với bảng trong DB
 @Table(name = "users") // map với bảng users
@@ -22,13 +16,14 @@ import lombok.experimental.FieldDefaults;
 @AllArgsConstructor // lombok: sinh constructor có tham số cho tất cả field
 @Builder // lombok: hỗ trợ tạo object theo Builder pattern
 @FieldDefaults(level = AccessLevel.PRIVATE) // lombok: tất cả field mặc định là private, không cần khai báo lại
-public class User {
+public class User extends BaseEntity {
 
     @Id
+    // sử dụng UUID làm ID, tự động sinh giá trị khi tạo mới
     @GeneratedValue(strategy = GenerationType.UUID)
     // không cập nhật, không null, độ dài tối đa 36 ký tự
     @Column(updatable = false, nullable = false, length = 36)
-    String id;
+    String userId;
 
     @Column(nullable = false, length = 100)
     String fullName;
@@ -49,12 +44,4 @@ public class User {
     // cấu hình ManyToMany
     @ManyToMany
     Set<Role> roles = new HashSet<>();
-
-    @CreationTimestamp
-    @Column(name = "created_at", updatable = false)
-    LocalDateTime createdAt;
-
-    @UpdateTimestamp
-    @Column(name = "updated_at")
-    LocalDateTime updatedAt;
 }

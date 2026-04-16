@@ -1,17 +1,5 @@
 package com.smartparking.service;
 
-import java.text.ParseException;
-import java.time.Instant;
-import java.time.temporal.ChronoUnit;
-import java.util.Date;
-import java.util.Set;
-import java.util.StringJoiner;
-
-import org.springframework.beans.factory.annotation.Value;
-import org.springframework.security.crypto.password.PasswordEncoder;
-import org.springframework.stereotype.Service;
-import org.springframework.util.CollectionUtils;
-
 import com.nimbusds.jose.*;
 import com.nimbusds.jose.crypto.MACSigner;
 import com.nimbusds.jose.crypto.MACVerifier;
@@ -32,12 +20,23 @@ import com.smartparking.exception.AppException;
 import com.smartparking.mapper.UserMapper;
 import com.smartparking.repository.RoleRepository;
 import com.smartparking.repository.UserRepository;
-
+import com.smartparking.service.validator.UserValidator;
 import lombok.AccessLevel;
 import lombok.RequiredArgsConstructor;
 import lombok.experimental.FieldDefaults;
 import lombok.experimental.NonFinal;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.beans.factory.annotation.Value;
+import org.springframework.security.crypto.password.PasswordEncoder;
+import org.springframework.stereotype.Service;
+import org.springframework.util.CollectionUtils;
+
+import java.text.ParseException;
+import java.time.Instant;
+import java.time.temporal.ChronoUnit;
+import java.util.Date;
+import java.util.Set;
+import java.util.StringJoiner;
 
 @Service
 @RequiredArgsConstructor
@@ -49,6 +48,8 @@ public class AuthenticationService {
 
     UserMapper userMapper;
 
+    UserValidator userValidator;
+
     PasswordEncoder passwordEncoder;
 
     @NonFinal
@@ -57,12 +58,7 @@ public class AuthenticationService {
 
     public RegisterResponse register(RegisterRequest request) {
         // kiểm tra tổn tại: email, phone number
-        if (userRepository.existsByEmail(request.getEmail())) {
-            throw new AppException(ErrorCode.EMAIL_EXISTED);
-        }
-        if (userRepository.existsByPhoneNumber(request.getPhoneNumber())) {
-            throw new AppException(ErrorCode.PHONE_EXISTED);
-        }
+        userValidator.checkEmailAndPhoneExists(request.getEmail(), request.getPhoneNumber());
 
         // tim role USER trong danh sách role
         Role userRole = roleRepository

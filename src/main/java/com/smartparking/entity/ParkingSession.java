@@ -1,11 +1,10 @@
 package com.smartparking.entity;
 
-import java.time.LocalDateTime;
-
 import jakarta.persistence.*;
-
 import lombok.*;
 import lombok.experimental.FieldDefaults;
+
+import java.time.LocalDateTime;
 
 @Entity
 @Table(name = "parking_sessions")
@@ -16,6 +15,10 @@ import lombok.experimental.FieldDefaults;
 @Builder
 @FieldDefaults(level = AccessLevel.PRIVATE)
 public class ParkingSession extends BaseEntity {
+
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    Long parkingSessionId;
 
     @Column(nullable = false)
     LocalDateTime checkInTime;

@@ -15,6 +15,10 @@ import lombok.experimental.FieldDefaults;
 @FieldDefaults(level = AccessLevel.PRIVATE)
 public class Vehicle extends BaseEntity {
 
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    Long vehicleId;
+
     @Column(nullable = false, unique = true, length = 20)
     String licensePlate;
 

@@ -17,6 +17,10 @@ import lombok.experimental.FieldDefaults;
 @FieldDefaults(level = AccessLevel.PRIVATE)
 public class ParkingSlot extends BaseEntity {
 
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    Long parkingSlotId;
+
     @Column(nullable = false, length = 50)
     String name; // A1, A2, B1
 

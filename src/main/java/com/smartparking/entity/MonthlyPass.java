@@ -1,11 +1,10 @@
 package com.smartparking.entity;
 
-import java.time.LocalDate;
-
 import jakarta.persistence.*;
-
 import lombok.*;
 import lombok.experimental.FieldDefaults;
+
+import java.time.LocalDate;
 
 @Entity
 @Table(name = "monthly_passes")
@@ -16,6 +15,10 @@ import lombok.experimental.FieldDefaults;
 @Builder
 @FieldDefaults(level = AccessLevel.PRIVATE)
 public class MonthlyPass extends BaseEntity {
+
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    Long monthlyPassId;
 
     @Column(nullable = false)
     LocalDate startDate;

@@ -1,13 +1,11 @@
 package com.smartparking.entity;
 
-import java.time.LocalDateTime;
-
-import jakarta.persistence.*;
-
 import com.smartparking.enums.BookingStatus;
-
+import jakarta.persistence.*;
 import lombok.*;
 import lombok.experimental.FieldDefaults;
+
+import java.time.LocalDateTime;
 
 @Entity
 @Table(name = "bookings")
@@ -18,6 +16,10 @@ import lombok.experimental.FieldDefaults;
 @Builder
 @FieldDefaults(level = AccessLevel.PRIVATE)
 public class Booking extends BaseEntity {
+
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    Long bookingId;
 
     @Column(nullable = false)
     LocalDateTime bookingTime;

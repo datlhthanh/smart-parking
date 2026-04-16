@@ -15,6 +15,10 @@ import lombok.experimental.FieldDefaults;
 @FieldDefaults(level = AccessLevel.PRIVATE)
 public class ParkingZone extends BaseEntity {
 
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    Long parkingZoneId;
+
     @Column(nullable = false, unique = true, length = 50)
     String name; // Zone A, Zone B
 

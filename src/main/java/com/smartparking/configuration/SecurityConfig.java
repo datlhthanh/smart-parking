@@ -18,7 +18,7 @@ import lombok.experimental.FieldDefaults;
 public class SecurityConfig {
 
     // danh sách các end point được phép public
-    String[] PUBLIC_ENDPOINT = {"/auth/**", "/v3/api-docs/**", "/v3/api-docs.yaml", "/swagger-ui/**", "/swagger-ui.html"
+    String[] PUBLIC_ENDPOINT = {"/auth/**", "/users/**", "/v3/api-docs/**", "/v3/api-docs.yaml", "/swagger-ui/**", "/swagger-ui.html"
     };
 
     @Bean
