@@ -1,13 +1,13 @@
 package com.smartparking.repository;
 
-import java.util.Optional;
-
+import com.smartparking.entity.User;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
 
-import com.smartparking.entity.User;
+import java.util.Optional;
 
 @Repository
+// <User, String> User là kiểu entity, String là kiểu dữ liệu của khóa chính (id)
 public interface UserRepository extends JpaRepository<User, String> {
     boolean existsByEmail(String email);
 

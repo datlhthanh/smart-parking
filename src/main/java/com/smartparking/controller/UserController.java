@@ -66,6 +66,10 @@ public class UserController {
 
         authentication.getAuthorities().forEach(grantedAuthority -> log.info(grantedAuthority.getAuthority()));
 
+        log.info("Auth: {}", authentication);
+        log.info("Authorities: {}", authentication.getAuthorities());
+        log.info("Principal: {}", authentication.getPrincipal());
+
         return ApiResponse.<List<UserResponse>>builder()
                 .result(userService.getUsers())
                 .build();
