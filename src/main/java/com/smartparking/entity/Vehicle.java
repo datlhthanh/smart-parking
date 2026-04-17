@@ -1,6 +1,10 @@
 package com.smartparking.entity;
 
+import java.time.LocalDateTime;
+
 import jakarta.persistence.*;
+
+import com.smartparking.enums.VehicleRegistrationStatus;
 
 import lombok.*;
 import lombok.experimental.FieldDefaults;
@@ -38,4 +42,15 @@ public class Vehicle extends BaseEntity {
     @ManyToOne
     @JoinColumn(name = "vehicle_type_id", nullable = false)
     VehicleType vehicleType;
+
+    @Builder.Default
+    @Enumerated(EnumType.STRING)
+    @Column(nullable = false, length = 20)
+    VehicleRegistrationStatus status = VehicleRegistrationStatus.PENDING;
+
+    @Column(length = 500)
+    String rejectReason;
+
+    @Column(name = "approved_at")
+    LocalDateTime approvedAt;
 }

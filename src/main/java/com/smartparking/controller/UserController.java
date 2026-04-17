@@ -1,17 +1,19 @@
 package com.smartparking.controller;
 
+import java.util.List;
+
+import org.springframework.web.bind.annotation.*;
+
 import com.smartparking.dto.request.UserCreationRequest;
 import com.smartparking.dto.request.UserUpdateRequest;
 import com.smartparking.dto.response.ApiResponse;
 import com.smartparking.dto.response.UserResponse;
 import com.smartparking.service.UserService;
+
 import lombok.AccessLevel;
 import lombok.RequiredArgsConstructor;
 import lombok.experimental.FieldDefaults;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.web.bind.annotation.*;
-
-import java.util.List;
 
 @RestController
 @RequestMapping("/users")
@@ -60,17 +62,21 @@ public class UserController {
 
     @GetMapping
     ApiResponse<List<UserResponse>> getAllUsers() {
+        var result = userService.getAllUsers();
+
         return ApiResponse.<List<UserResponse>>builder()
                 .message("User list retrieved")
-                .result(userService.getUsers())
+                .result(result)
                 .build();
     }
 
     @GetMapping("/{id}")
     ApiResponse<UserResponse> getUser(@PathVariable String id) {
+        var result = userService.getUser(id);
+
         return ApiResponse.<UserResponse>builder()
-                .message("User info retrieved")
-                .result(userService.getUser(id))
+                .message("User retrieved")
+                .result(result)
                 .build();
     }
 }

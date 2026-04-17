@@ -22,9 +22,9 @@ public class SecurityConfig {
     private CustomJwtDecoder customJwtDecoder;
 
     // danh sách các end point được phép public
-    String[] PUBLIC_ENDPOINT = {
-        "/auth/**", "/users/**", "/v3/api-docs/**", "/v3/api-docs.yaml", "/swagger-ui/**", "/swagger-ui.html"
-    };
+    static String[] PUBLIC_ENDPOINT = {"/auth/**", "/users/**", "/vehicle-types/**", "/vehicles/**"};
+
+    static String[] SWAGGER_ENDPOINT = {"/v3/api-docs/**", "/v3/api-docs.yaml", "/swagger-ui/**", "/swagger-ui.html"};
 
     @Bean
     public SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
@@ -32,6 +32,8 @@ public class SecurityConfig {
         // cấu hình các endpoint public
         http.csrf(AbstractHttpConfigurer::disable) // tắt csrf vì cái này sida quá rồi
                 .authorizeHttpRequests(request -> request.requestMatchers(PUBLIC_ENDPOINT)
+                        .permitAll()
+                        .requestMatchers(SWAGGER_ENDPOINT)
                         .permitAll()
                         .anyRequest()
                         .authenticated());

@@ -9,6 +9,8 @@ import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
+import org.springframework.util.StringUtils;
 
 import com.smartparking.dto.request.UserCreationRequest;
 import com.smartparking.dto.request.UserUpdateRequest;
@@ -44,6 +46,7 @@ public class UserService {
     PasswordEncoder passwordEncoder;
 
     @PreAuthorize("hasRole('ADMIN')")
+    @Transactional
     public UserResponse createUser(UserCreationRequest request) {
         userValidator.checkEmailAndPhoneExists(request.getEmail(), request.getPhoneNumber());
 
@@ -61,24 +64,30 @@ public class UserService {
     }
 
     @PreAuthorize("hasRole('ADMIN') or #userId == authentication.principal.id")
+    @Transactional
     public UserResponse updateUser(String userId, UserUpdateRequest request) {
         User user = userRepository.findById(userId).orElseThrow(() -> new AppException(ErrorCode.USER_NOT_FOUND));
 
         userMapper.updateUser(user, request);
 
-        user.setPassword(passwordEncoder.encode(request.getPassword()));
-        user.setFullName(request.getFullName());
+        if (StringUtils.hasText(request.getPassword())) {
+            user.setPassword(passwordEncoder.encode(request.getPassword()));
+        }
 
-        userValidator.checkPhoneExists(request.getPhoneNumber());
-        user.setPhoneNumber(request.getPhoneNumber());
+        if (StringUtils.hasText(request.getPhoneNumber())) {
+            userValidator.checkPhoneExists(request.getPhoneNumber());
+        }
 
-        var roles = roleRepository.findAllById(request.getRoles());
-        user.setRoles(new HashSet<>(roles));
+        if (request.getRoles() != null && !request.getRoles().isEmpty()) {
+            var roles = roleRepository.findAllById(request.getRoles());
+            user.setRoles(new HashSet<>(roles));
+        }
 
         return userMapper.toUserResponse(userRepository.save(user));
     }
 
     @PreAuthorize("hasRole('ADMIN')")
+    @Transactional
     public void deleteUser(String id) {
         userRepository.deleteById(id);
     }
@@ -93,7 +102,7 @@ public class UserService {
     }
 
     @PreAuthorize("hasRole('ADMIN')")
-    public List<UserResponse> getUsers() {
+    public List<UserResponse> getAllUsers() {
         return userRepository.findAll().stream().map(userMapper::toUserResponse).toList();
     }
 

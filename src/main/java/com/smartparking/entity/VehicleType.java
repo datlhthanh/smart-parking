@@ -1,5 +1,7 @@
 package com.smartparking.entity;
 
+import java.math.BigDecimal;
+
 import jakarta.persistence.*;
 
 import lombok.*;
@@ -22,6 +24,9 @@ public class VehicleType extends BaseEntity {
     @Column(nullable = false, unique = true, length = 50)
     String name; // Car, Motorbike, Bicycle
 
-    @Column(length = 100)
-    String dimensions;
+    @Column(nullable = false)
+    BigDecimal basePrice;
+
+    @Column(length = 255)
+    String description;
 }

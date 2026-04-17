@@ -36,14 +36,20 @@ public class User extends BaseEntity {
     @Column(unique = true, nullable = false, length = 100)
     String email;
 
-    @Column(nullable = false)
+    @Column(nullable = false, length = 255)
     String password;
 
+    @Builder.Default
     @Enumerated(EnumType.STRING)
     @Column(nullable = false, length = 20)
-    UserStatus status; // Enum: ACTIVE, INACTIVE, BANNED
+    UserStatus status = UserStatus.ACTIVE; // Enum: ACTIVE, INACTIVE, BANNED
 
     // cấu hình ManyToMany
-    @ManyToMany
+    @Builder.Default
+    @ManyToMany(fetch = FetchType.LAZY)
+    @JoinTable(
+            name = "user_roles",
+            joinColumns = @JoinColumn(name = "user_id"),
+            inverseJoinColumns = @JoinColumn(name = "role_id"))
     Set<Role> roles = new HashSet<>();
 }

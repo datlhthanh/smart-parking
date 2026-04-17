@@ -9,6 +9,7 @@ import java.util.*;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 import org.springframework.util.CollectionUtils;
 
 import com.nimbusds.jose.*;
@@ -62,6 +63,7 @@ public class AuthenticationService {
     @Value("${jwt.signerKey}")
     String SIGNER_KEY;
 
+    @Transactional
     public RegisterResponse register(RegisterRequest request) {
         // kiểm tra tổn tại: email, phone number
         userValidator.checkEmailAndPhoneExists(request.getEmail(), request.getPhoneNumber());
@@ -176,6 +178,7 @@ public class AuthenticationService {
         return signedJWT;
     }
 
+    @Transactional
     public void forgotPassword(ForgotPasswordRequest request) {
         // tìm User
         User user = userRepository
@@ -197,6 +200,7 @@ public class AuthenticationService {
         emailService.sendOtpEmail(user.getEmail(), otp);
     }
 
+    @Transactional
     public void resetPassword(ResetPasswordRequest request) {
         // tìm User
         User user = userRepository
@@ -221,6 +225,7 @@ public class AuthenticationService {
         forgotPasswordTokenRepository.delete(token);
     }
 
+    @Transactional
     public void logout(LogoutRequest request) throws ParseException, JOSEException {
         // xác thực token (nếu token không hợp lệ sẽ ném exception)
         var signToken = verifyToken(request.getToken());
