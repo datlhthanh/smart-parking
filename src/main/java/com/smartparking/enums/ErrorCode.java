@@ -10,15 +10,15 @@ import lombok.experimental.FieldDefaults;
 @Getter
 @FieldDefaults(level = AccessLevel.PRIVATE, makeFinal = true)
 public enum ErrorCode {
-    UNCATEGORIZED_EXCEPTION(9999, "Uncategorized Exception.", HttpStatus.INTERNAL_SERVER_ERROR),
-    INVALID_OTP(9001, "Invalid OTP.", HttpStatus.BAD_REQUEST),
-    EXPIRED_OTP(9002, "Expired OTP.", HttpStatus.BAD_REQUEST),
-    EMAIL_EXISTED(1001, "Email already exists.", HttpStatus.BAD_REQUEST),
-    PHONE_EXISTED(1002, "Phone number already exists.", HttpStatus.BAD_REQUEST),
-    USER_NOT_FOUND(1003, "User not found.", HttpStatus.NOT_FOUND),
-    INVALID_CREDENTIALS(1004, "Wrong email or password, try again.", HttpStatus.UNAUTHORIZED),
-    UNAUTHENTICATED(1005, "Unauthenticated.", HttpStatus.UNAUTHORIZED),
-    ROLE_NOT_FOUND(2001, "Role not found.", HttpStatus.NOT_FOUND),
+    UNCATEGORIZED_EXCEPTION(9999, "Uncategorized error", HttpStatus.INTERNAL_SERVER_ERROR),
+    INVALID_OTP(9001, "Invalid OTP", HttpStatus.BAD_REQUEST),
+    EXPIRED_OTP(9002, "OTP expired", HttpStatus.BAD_REQUEST),
+    EMAIL_EXISTED(1001, "Email existed", HttpStatus.BAD_REQUEST),
+    PHONE_EXISTED(1002, "Phone number existed", HttpStatus.BAD_REQUEST),
+    USER_NOT_FOUND(1003, "User not found", HttpStatus.NOT_FOUND),
+    INVALID_CREDENTIALS(1004, "Invalid credentials", HttpStatus.UNAUTHORIZED),
+    UNAUTHENTICATED(1005, "Unauthenticated", HttpStatus.UNAUTHORIZED),
+    ROLE_NOT_FOUND(2001, "Role not found", HttpStatus.NOT_FOUND),
     ;
 
     // Constructor để gán giá trị cho từng phần tử enum

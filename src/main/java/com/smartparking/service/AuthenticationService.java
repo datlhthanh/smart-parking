@@ -154,16 +154,22 @@ public class AuthenticationService {
     }
 
     private SignedJWT verifyToken(String token) throws JOSEException, ParseException {
+        // tạo JWSVerifier với SIGNER_KEY
         JWSVerifier jwsVerifier = new MACVerifier(SIGNER_KEY.getBytes());
 
+        // parse token thành SignedJWT
         SignedJWT signedJWT = SignedJWT.parse(token);
 
+        // xác thực token: verify signature
         var verified = signedJWT.verify(jwsVerifier);
 
+        // lấy ra expiration time từ claim set để kiểm tra token đã hết hạn chưa
         var expiryTime = signedJWT.getJWTClaimsSet().getExpirationTime();
 
+        // nếu token không hợp lệ hoặc đã hết hạn thì ném exception
         if (!(verified && expiryTime.after(new Date()))) throw new AppException(ErrorCode.UNAUTHENTICATED);
 
+        // kiểm tra xem token này có trong danh sách bị vô hiệu hóa không (logout)
         if (invalidatedRepository.existsById(signedJWT.getJWTClaimsSet().getJWTID()))
             throw new AppException(ErrorCode.UNAUTHENTICATED);
 
@@ -171,15 +177,15 @@ public class AuthenticationService {
     }
 
     public void forgotPassword(ForgotPasswordRequest request) {
-        // 1. tìm User
+        // tìm User
         User user = userRepository
                 .findByEmail(request.getEmail())
                 .orElseThrow(() -> new AppException(ErrorCode.USER_NOT_FOUND));
 
-        // 2. tạo mã OTP ngẫu nhiên 6 số
+        // tạo mã OTP ngẫu nhiên 6 số
         String otp = String.format("%06d", new Random().nextInt(999999));
 
-        // 3. lưu vào DB (hạn là 5 phút)
+        // lưu vào DB (hạn là 5 phút)
         ForgotPasswordToken token = ForgotPasswordToken.builder()
                 .otp(otp)
                 .user(user)
@@ -187,47 +193,47 @@ public class AuthenticationService {
                 .build();
         forgotPasswordTokenRepository.save(token);
 
-        // 4. gửi Email
+        // gửi Email
         emailService.sendOtpEmail(user.getEmail(), otp);
     }
 
     public void resetPassword(ResetPasswordRequest request) {
-        // 1. tìm User
+        // tìm User
         User user = userRepository
                 .findByEmail(request.getEmail())
                 .orElseThrow(() -> new AppException(ErrorCode.USER_NOT_FOUND));
 
-        // 2. tìm Token xem có khớp với User và OTP người dùng nhập không
+        // tìm Token xem có khớp với User và OTP người dùng nhập không
         ForgotPasswordToken token = forgotPasswordTokenRepository
                 .findByUserAndOtp(user, request.getOtp())
                 .orElseThrow(() -> new AppException(ErrorCode.INVALID_OTP));
 
-        // 3. kiểm tra xem mã đã hết hạn chưa
+        // kiểm tra xem mã đã hết hạn chưa
         if (token.getExpiryTime().isBefore(LocalDateTime.now())) {
             throw new AppException(ErrorCode.EXPIRED_OTP);
         }
 
-        // 4. update mật khẩu mới
+        // update mật khẩu mới
         user.setPassword(passwordEncoder.encode(request.getNewPassword()));
         userRepository.save(user);
 
-        // 5. xóa mã đó đi (để không bị dùng lại)
+        // xóa mã đó đi (để không bị dùng lại)
         forgotPasswordTokenRepository.delete(token);
     }
 
     public void logout(LogoutRequest request) throws ParseException, JOSEException {
-        // 1. xác thực token (nếu token không hợp lệ sẽ ném exception)
+        // xác thực token (nếu token không hợp lệ sẽ ném exception)
         var signToken = verifyToken(request.getToken());
 
-        // 2. lấy JWT ID (jit) và expiration time từ token
+        // lấy JWT ID (jit) và expiration time từ token
         String jit = signToken.getJWTClaimsSet().getJWTID();
         Date exp = signToken.getJWTClaimsSet().getExpirationTime();
 
-        // 3. 5ạo một bản ghi mới đánh dấu token này là "đã bị vô hiệu hóa"
+        // tạo một bản ghi mới đánh dấu token này là "đã bị vô hiệu hóa"
         InvalidatedToken invalidatedToken =
                 InvalidatedToken.builder().id(jit).expiryTime(exp).build();
 
-        // 5. lưu token này vào cơ sở dữ liệu
+        // lưu token này vào cơ sở dữ liệu
         // khi có request mới hệ thống sẽ kiểm tra xem token này có trong danh sách bị vô hiệu hóa không
         invalidatedRepository.save(invalidatedToken);
     }

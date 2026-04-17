@@ -1,20 +1,17 @@
 package com.smartparking.controller;
 
-import java.util.List;
-
-import org.springframework.security.core.context.SecurityContextHolder;
-import org.springframework.web.bind.annotation.*;
-
 import com.smartparking.dto.request.UserCreationRequest;
 import com.smartparking.dto.request.UserUpdateRequest;
 import com.smartparking.dto.response.ApiResponse;
 import com.smartparking.dto.response.UserResponse;
 import com.smartparking.service.UserService;
-
 import lombok.AccessLevel;
 import lombok.RequiredArgsConstructor;
 import lombok.experimental.FieldDefaults;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.web.bind.annotation.*;
+
+import java.util.List;
 
 @RestController
 @RequestMapping("/users")
@@ -29,55 +26,51 @@ public class UserController {
         var result = userService.createUser(request);
 
         return ApiResponse.<UserResponse>builder()
-                .message("User created successfully.")
+                .message("User created")
                 .result(result)
                 .build();
     }
 
-    @PutMapping("/{userId}")
-    ApiResponse<UserResponse> updateUser(@PathVariable String userId, @RequestBody UserUpdateRequest request) {
-        var result = userService.updateUser(userId, request);
+    @PatchMapping("/{id}")
+    ApiResponse<UserResponse> updateUser(@PathVariable String id, @RequestBody UserUpdateRequest request) {
+        var result = userService.updateUser(id, request);
 
         return ApiResponse.<UserResponse>builder()
-                .message("User updated successfully.")
+                .message("User updated")
                 .result(result)
                 .build();
     }
 
-    @DeleteMapping("/{userId}")
-    ApiResponse<Void> deleteUser(@PathVariable String userId) {
-        userService.deleteUser(userId);
+    @DeleteMapping("/{id}")
+    ApiResponse<Void> deleteUser(@PathVariable String id) {
+        userService.deleteUser(id);
 
-        return ApiResponse.<Void>builder().message("User deleted successfully.").build();
+        return ApiResponse.<Void>builder().message("User deleted").build();
     }
 
-    @GetMapping("/myInfo")
+    @GetMapping("/me")
     ApiResponse<UserResponse> getMyInfo() {
         var result = userService.getMyInfo();
 
-        return ApiResponse.<UserResponse>builder().result(result).build();
+        return ApiResponse.<UserResponse>builder()
+                .message("User info retrieved")
+                .result(result)
+                .build();
     }
 
     @GetMapping
-    ApiResponse<List<UserResponse>> getUsers() {
-        var authentication = SecurityContextHolder.getContext().getAuthentication();
-
-        authentication.getAuthorities().forEach(grantedAuthority -> log.info(grantedAuthority.getAuthority()));
-
-        log.info("Auth: {}", authentication);
-        log.info("Authorities: {}", authentication.getAuthorities());
-        log.info("Principal: {}", authentication.getPrincipal());
-
+    ApiResponse<List<UserResponse>> getAllUsers() {
         return ApiResponse.<List<UserResponse>>builder()
+                .message("User list retrieved")
                 .result(userService.getUsers())
                 .build();
     }
 
-    @GetMapping("/{userId}")
-    ApiResponse<UserResponse> getUser(@PathVariable("userId") String userId) {
-
+    @GetMapping("/{id}")
+    ApiResponse<UserResponse> getUser(@PathVariable String id) {
         return ApiResponse.<UserResponse>builder()
-                .result(userService.getUser(userId))
+                .message("User info retrieved")
+                .result(userService.getUser(id))
                 .build();
     }
 }
