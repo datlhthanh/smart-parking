@@ -24,19 +24,22 @@ public class ParkingSession extends BaseEntity {
     @Column(nullable = false)
     LocalDateTime checkInTime;
 
-    LocalDateTime checkOutTime; // có thể null vì lúc mới vào chưa ra
+    LocalDateTime checkOutTime;
 
-    Double totalFee; // phí gửi xe (nếu là vé ngày)
+    Double totalFee;
+
+    @Column(nullable = false, length = 20)
+    String licensePlate;
 
     @Column(length = 255)
-    String checkInImage; // ảnh chụp biển số lúc vào
+    String checkInImage;
 
     @Column(length = 255)
-    String checkOutImage; // ảnh chụp biển số lúc ra
+    String checkOutImage;
 
     @ManyToOne
-    @JoinColumn(name = "vehicle_id", nullable = false)
-    Vehicle vehicle;
+    @JoinColumn(name = "vehicle_id")
+    Vehicle vehicle; // có thể null nếu xe vãng lai
 
     @ManyToOne
     @JoinColumn(name = "parking_slot_id")

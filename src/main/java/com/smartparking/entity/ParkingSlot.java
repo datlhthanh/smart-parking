@@ -22,13 +22,16 @@ public class ParkingSlot extends BaseEntity {
     Long parkingSlotId;
 
     @Column(nullable = false, length = 50)
-    String name; // A1, A2, B1
+    String name; // A1, A2...
 
     @Enumerated(EnumType.STRING)
     @Column(nullable = false, length = 20)
-    SlotStatus status; // Enum: AVAILABLE, OCCUPIED, MAINTENANCE
+    SlotStatus status; // AVAILABLE, OCCUPIED...
 
     @ManyToOne
     @JoinColumn(name = "zone_id", nullable = false)
     ParkingZone parkingZone;
+
+    @Builder.Default
+    Boolean isEnabled = true;
 }

@@ -19,13 +19,17 @@ public class ParkingZone extends BaseEntity {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     Long parkingZoneId;
 
-    @Column(nullable = false, unique = true, length = 50)
-    String name; // Zone A, Zone B
+    @Column(nullable = false, length = 50)
+    String name; // A, B, B1, Floor 1...
 
     @Column(nullable = false)
     Integer capacity;
 
     @ManyToOne
-    @JoinColumn(name = "allowed_vehicle_type_id")
+    @JoinColumn(name = "parking_lot_id", nullable = false)
+    ParkingLot parkingLot;
+
+    @ManyToOne
+    @JoinColumn(name = "vehicle_type_id", nullable = false)
     VehicleType allowedVehicleType;
 }
