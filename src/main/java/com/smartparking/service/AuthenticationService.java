@@ -18,9 +18,9 @@ import com.nimbusds.jose.crypto.MACVerifier;
 import com.nimbusds.jwt.JWTClaimsSet;
 import com.nimbusds.jwt.SignedJWT;
 import com.smartparking.dto.request.*;
-import com.smartparking.dto.response.IntrospectResponse;
-import com.smartparking.dto.response.LoginResponse;
-import com.smartparking.dto.response.RegisterResponse;
+import com.smartparking.dto.response.AuthIntrospectResponse;
+import com.smartparking.dto.response.UserLoginResponse;
+import com.smartparking.dto.response.UserRegisterResponse;
 import com.smartparking.entity.InvalidatedToken;
 import com.smartparking.entity.OtpToken;
 import com.smartparking.entity.Role;
@@ -30,7 +30,10 @@ import com.smartparking.enums.RoleName;
 import com.smartparking.enums.UserStatus;
 import com.smartparking.exception.AppException;
 import com.smartparking.mapper.UserMapper;
-import com.smartparking.repository.*;
+import com.smartparking.repository.InvalidatedRepository;
+import com.smartparking.repository.OtpTokenRepository;
+import com.smartparking.repository.RoleRepository;
+import com.smartparking.repository.UserRepository;
 import com.smartparking.service.validator.UserValidator;
 
 import lombok.AccessLevel;
@@ -61,7 +64,7 @@ public class AuthenticationService {
     String SIGNER_KEY;
 
     @Transactional
-    public RegisterResponse register(RegisterRequest request) {
+    public UserRegisterResponse register(UserRegisterRequest request) {
         // kiểm tra tổn tại: email, phone number
         userValidator.checkEmailAndPhoneExists(request.getEmail(), request.getPhoneNumber());
 
@@ -71,7 +74,7 @@ public class AuthenticationService {
                 .orElseThrow(() -> new AppException(ErrorCode.ROLE_NOT_FOUND));
 
         // dùng mapper để tạo user mới, set các trường từ request
-        User user = userMapper.toRegisterUser(request);
+        User user = userMapper.toUser(request);
 
         // set status mặc định là ACTIVE, set role là USER
         user.setPassword(passwordEncoder.encode(request.getPassword()));
@@ -82,7 +85,7 @@ public class AuthenticationService {
         return userMapper.toRegisterResponse(userRepository.save(user));
     }
 
-    public LoginResponse login(LoginRequest request) {
+    public UserLoginResponse login(UserLoginRequest request) {
         // tìm user theo email
         User user = userRepository
                 .findByEmail(request.getEmail())
@@ -96,7 +99,7 @@ public class AuthenticationService {
         var token = generateToken(user);
 
         // trả về token
-        return LoginResponse.builder().token(token).authenticated(true).build();
+        return UserLoginResponse.builder().token(token).authenticated(true).build();
     }
 
     private String generateToken(User user) {
@@ -138,7 +141,7 @@ public class AuthenticationService {
         return stringJoiner.toString();
     }
 
-    public IntrospectResponse introspect(IntrospectRequest request) {
+    public AuthIntrospectResponse introspect(AuthIntrospectRequest request) {
         var token = request.getToken();
 
         var isValid = true;
@@ -149,7 +152,7 @@ public class AuthenticationService {
             isValid = false;
         }
 
-        return IntrospectResponse.builder().validated(isValid).build();
+        return AuthIntrospectResponse.builder().validated(isValid).build();
     }
 
     private SignedJWT verifyToken(String token) throws JOSEException, ParseException {
@@ -176,7 +179,7 @@ public class AuthenticationService {
     }
 
     @Transactional
-    public void forgotPassword(ForgotPasswordRequest request) {
+    public void forgotPassword(UserForgotPasswordRequest request) {
         // tìm User
         User user = userRepository
                 .findByEmail(request.getEmail())
@@ -198,7 +201,7 @@ public class AuthenticationService {
     }
 
     @Transactional
-    public void resetPassword(ResetPasswordRequest request) {
+    public void resetPassword(UserResetPasswordRequest request) {
         // tìm User
         User user = userRepository
                 .findByEmail(request.getEmail())
@@ -223,7 +226,7 @@ public class AuthenticationService {
     }
 
     @Transactional
-    public void logout(LogoutRequest request) throws ParseException, JOSEException {
+    public void logout(UserLogoutRequest request) throws ParseException, JOSEException {
         // xác thực token (nếu token không hợp lệ sẽ ném exception)
         var signToken = verifyToken(request.getToken());
 

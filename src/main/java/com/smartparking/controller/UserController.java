@@ -4,7 +4,7 @@ import java.util.List;
 
 import org.springframework.web.bind.annotation.*;
 
-import com.smartparking.dto.request.UserCreationRequest;
+import com.smartparking.dto.request.UserCreateRequest;
 import com.smartparking.dto.request.UserUpdateRequest;
 import com.smartparking.dto.response.ApiResponse;
 import com.smartparking.dto.response.UserResponse;
@@ -24,7 +24,7 @@ public class UserController {
     UserService userService;
 
     @PostMapping()
-    ApiResponse<UserResponse> createUser(@RequestBody UserCreationRequest request) {
+    ApiResponse<UserResponse> createUser(@RequestBody UserCreateRequest request) {
         var result = userService.createUser(request);
 
         return ApiResponse.<UserResponse>builder()

@@ -22,7 +22,9 @@ public class SecurityConfig {
     private CustomJwtDecoder customJwtDecoder;
 
     // danh sách các end point được phép public
-    static String[] PUBLIC_ENDPOINT = {"/auth/**", "/users/**", "/vehicle-types/**", "/vehicles/**"};
+    static String[] PUBLIC_ENDPOINT = {
+        "/auth/**", "/users/**", "/vehicle-types/**", "/vehicles/**", "/parking-sessions/**"
+    };
 
     static String[] SWAGGER_ENDPOINT = {"/v3/api-docs/**", "/v3/api-docs.yaml", "/swagger-ui/**", "/swagger-ui.html"};
 

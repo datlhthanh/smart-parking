@@ -24,6 +24,5 @@ public class EmailService {
                 + ". Mã này sẽ hết hạn trong 5 phút. Vui lòng không chia sẻ cho bất kỳ ai.");
 
         javaMailSender.send(message);
-        log.info("Đã gửi email chứa OTP tới: {}", to);
     }
 }

@@ -10,7 +10,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.util.StringUtils;
 
-import com.smartparking.dto.request.UserCreationRequest;
+import com.smartparking.dto.request.UserCreateRequest;
 import com.smartparking.dto.request.UserUpdateRequest;
 import com.smartparking.dto.response.UserResponse;
 import com.smartparking.entity.Role;
@@ -45,7 +45,7 @@ public class UserService {
 
     // @PreAuthorize("hasRole('ADMIN')")
     @Transactional
-    public UserResponse createUser(UserCreationRequest request) {
+    public UserResponse createUser(UserCreateRequest request) {
         userValidator.checkEmailAndPhoneExists(request.getEmail(), request.getPhoneNumber());
 
         Role role = roleRepository

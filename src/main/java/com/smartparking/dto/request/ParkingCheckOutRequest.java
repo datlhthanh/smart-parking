@@ -8,8 +8,7 @@ import lombok.experimental.FieldDefaults;
 @NoArgsConstructor
 @AllArgsConstructor
 @FieldDefaults(level = AccessLevel.PRIVATE)
-public class VehicleRequest {
+public class ParkingCheckOutRequest {
     String licensePlate;
-    String userId;
-    Long vehicleTypeId;
+    String checkOutImage;
 }

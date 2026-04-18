@@ -4,7 +4,7 @@ import java.util.List;
 
 import org.springframework.web.bind.annotation.*;
 
-import com.smartparking.dto.request.RejectRequest;
+import com.smartparking.dto.request.VehicleRejectRequest;
 import com.smartparking.dto.request.VehicleRequest;
 import com.smartparking.dto.response.ApiResponse;
 import com.smartparking.dto.response.VehicleResponse;
@@ -81,7 +81,8 @@ public class VehicleController {
     }
 
     @PatchMapping("/{id}/reject")
-    public ApiResponse<VehicleResponse> rejectVehicle(@PathVariable Long id, @RequestBody RejectRequest request) {
+    public ApiResponse<VehicleResponse> rejectVehicle(
+            @PathVariable Long id, @RequestBody VehicleRejectRequest request) {
         var result = vehicleService.rejectVehicle(id, request);
 
         return ApiResponse.<VehicleResponse>builder()

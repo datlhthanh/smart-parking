@@ -8,8 +8,9 @@ import lombok.experimental.FieldDefaults;
 @NoArgsConstructor
 @AllArgsConstructor
 @FieldDefaults(level = AccessLevel.PRIVATE)
-public class VehicleRequest {
-    String licensePlate;
-    String userId;
-    Long vehicleTypeId;
+public class UserRegisterRequest {
+    String email;
+    String password;
+    String fullName;
+    String phoneNumber;
 }

@@ -11,10 +11,7 @@ import org.springframework.web.bind.annotation.RestController;
 
 import com.nimbusds.jose.JOSEException;
 import com.smartparking.dto.request.*;
-import com.smartparking.dto.response.ApiResponse;
-import com.smartparking.dto.response.IntrospectResponse;
-import com.smartparking.dto.response.LoginResponse;
-import com.smartparking.dto.response.RegisterResponse;
+import com.smartparking.dto.response.*;
 import com.smartparking.service.AuthenticationService;
 
 import lombok.AccessLevel;
@@ -30,51 +27,51 @@ public class AuthController {
     AuthenticationService authenticationService;
 
     @PostMapping("/register")
-    ApiResponse<RegisterResponse> register(@RequestBody RegisterRequest request) {
+    ApiResponse<UserRegisterResponse> register(@RequestBody UserRegisterRequest request) {
         var result = authenticationService.register(request);
 
-        return ApiResponse.<RegisterResponse>builder()
+        return ApiResponse.<UserRegisterResponse>builder()
                 .message("User registered")
                 .result(result)
                 .build();
     }
 
     @PostMapping("/login")
-    ApiResponse<LoginResponse> login(@RequestBody LoginRequest request) {
+    ApiResponse<UserLoginResponse> login(@RequestBody UserLoginRequest request) {
         var result = authenticationService.login(request);
 
-        return ApiResponse.<LoginResponse>builder()
+        return ApiResponse.<UserLoginResponse>builder()
                 .message("Logged in")
                 .result(result)
                 .build();
     }
 
     @PostMapping("/introspect")
-    ApiResponse<IntrospectResponse> introspect(@RequestBody IntrospectRequest request) {
+    ApiResponse<AuthIntrospectResponse> introspect(@RequestBody AuthIntrospectRequest request) {
         var result = authenticationService.introspect(request);
 
-        return ApiResponse.<IntrospectResponse>builder()
+        return ApiResponse.<AuthIntrospectResponse>builder()
                 .message("Token introspected")
                 .result(result)
                 .build();
     }
 
     @PostMapping("/logout")
-    ApiResponse<Void> logout(@RequestBody LogoutRequest request) throws ParseException, JOSEException {
+    ApiResponse<Void> logout(@RequestBody UserLogoutRequest request) throws ParseException, JOSEException {
         authenticationService.logout(request);
 
         return ApiResponse.<Void>builder().message("Logged out").build();
     }
 
     @PostMapping("/forgot-password")
-    public ApiResponse<Void> forgotPassword(@RequestBody @Valid ForgotPasswordRequest request) {
+    public ApiResponse<Void> forgotPassword(@RequestBody @Valid UserForgotPasswordRequest request) {
         authenticationService.forgotPassword(request);
 
         return ApiResponse.<Void>builder().message("Verification code sent").build();
     }
 
     @PostMapping("/reset-password")
-    public ApiResponse<Void> resetPassword(@RequestBody @Valid ResetPasswordRequest request) {
+    public ApiResponse<Void> resetPassword(@RequestBody @Valid UserResetPasswordRequest request) {
         authenticationService.resetPassword(request);
         return ApiResponse.<Void>builder().message("Password updated").build();
     }

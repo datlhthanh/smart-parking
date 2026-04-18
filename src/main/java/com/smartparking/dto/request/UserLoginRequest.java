@@ -8,9 +8,7 @@ import lombok.experimental.FieldDefaults;
 @NoArgsConstructor
 @AllArgsConstructor
 @FieldDefaults(level = AccessLevel.PRIVATE)
-public class RegisterRequest {
+public class UserLoginRequest {
     String email;
     String password;
-    String fullName;
-    String phoneNumber;
 }

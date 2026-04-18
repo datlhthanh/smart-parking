@@ -11,15 +11,9 @@ import lombok.experimental.FieldDefaults;
 @NoArgsConstructor
 @AllArgsConstructor
 @FieldDefaults(level = AccessLevel.PRIVATE)
-public class ResetPasswordRequest {
+public class UserForgotPasswordRequest {
 
     @NotBlank
     @Email
     String email;
-
-    @NotBlank
-    String otp;
-
-    @NotBlank
-    String newPassword;
 }

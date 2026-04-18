@@ -12,8 +12,8 @@ import org.springframework.security.oauth2.jwt.JwtException;
 import org.springframework.security.oauth2.jwt.NimbusJwtDecoder;
 import org.springframework.stereotype.Component;
 
-import com.smartparking.dto.request.IntrospectRequest;
-import com.smartparking.dto.response.IntrospectResponse;
+import com.smartparking.dto.request.AuthIntrospectRequest;
+import com.smartparking.dto.response.AuthIntrospectResponse;
 import com.smartparking.service.AuthenticationService;
 
 @Component
@@ -31,9 +31,9 @@ public class CustomJwtDecoder implements JwtDecoder {
 
     @Override
     public Jwt decode(String token) throws JwtException {
-        IntrospectResponse response = null;
+        AuthIntrospectResponse response = null;
         response = authenticationService.introspect(
-                IntrospectRequest.builder().token(token).build());
+                AuthIntrospectRequest.builder().token(token).build());
 
         if (!response.isValidated()) throw new JwtException("Token invalid");
 

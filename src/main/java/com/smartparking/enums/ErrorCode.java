@@ -21,13 +21,16 @@ public enum ErrorCode {
     USER_NOT_FOUND(1003, "User not found", HttpStatus.NOT_FOUND),
     INVALID_CREDENTIALS(1004, "Invalid credentials", HttpStatus.UNAUTHORIZED),
     UNAUTHENTICATED(1005, "Unauthenticated", HttpStatus.UNAUTHORIZED),
-
     ROLE_NOT_FOUND(1006, "Role not found", HttpStatus.NOT_FOUND),
 
     VEHICLE_TYPE_NOT_FOUND(2001, "Vehicle type not found", HttpStatus.NOT_FOUND),
     VEHICLE_NOT_FOUND(2002, "Vehicle not found", HttpStatus.NOT_FOUND),
     VEHICLE_NOT_PENDING(2003, "Vehicle not pending", HttpStatus.CONFLICT),
-    ;
+
+    VEHICLE_CHECKED(3001, "Vehicle checked in", HttpStatus.CONFLICT),
+    VEHICLE_TYPE_NULL(3002, "Vehicle type is required for guest", HttpStatus.BAD_REQUEST),
+    NOT_AVAILABLE_SLOT(3003, "No available slot", HttpStatus.BAD_REQUEST),
+    ACTIVE_SESSION_NOT_FOUND(3004, "Active session not found", HttpStatus.NOT_FOUND);
 
     // Constructor để gán giá trị cho từng phần tử enum
     ErrorCode(int code, String message, HttpStatusCode statusCode) {

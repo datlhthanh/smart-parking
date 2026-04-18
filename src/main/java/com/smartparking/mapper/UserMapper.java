@@ -2,20 +2,20 @@ package com.smartparking.mapper;
 
 import org.mapstruct.*;
 
-import com.smartparking.dto.request.RegisterRequest;
-import com.smartparking.dto.request.UserCreationRequest;
+import com.smartparking.dto.request.UserCreateRequest;
+import com.smartparking.dto.request.UserRegisterRequest;
 import com.smartparking.dto.request.UserUpdateRequest;
-import com.smartparking.dto.response.RegisterResponse;
+import com.smartparking.dto.response.UserRegisterResponse;
 import com.smartparking.dto.response.UserResponse;
 import com.smartparking.entity.User;
 
 @Mapper(componentModel = "spring", unmappedTargetPolicy = ReportingPolicy.IGNORE)
 public interface UserMapper {
-    User toRegisterUser(RegisterRequest request);
+    User toUser(UserRegisterRequest request);
 
-    RegisterResponse toRegisterResponse(User user);
+    UserRegisterResponse toRegisterResponse(User user);
 
-    User toUser(UserCreationRequest request);
+    User toUser(UserCreateRequest request);
 
     UserResponse toUserResponse(User user);
 

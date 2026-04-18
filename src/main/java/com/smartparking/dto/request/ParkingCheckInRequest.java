@@ -8,6 +8,8 @@ import lombok.experimental.FieldDefaults;
 @NoArgsConstructor
 @AllArgsConstructor
 @FieldDefaults(level = AccessLevel.PRIVATE)
-public class IntrospectRequest {
-    String token;
+public class ParkingCheckInRequest {
+    String licensePlate;
+    String checkInImage;
+    Long vehicleTypeId;
 }

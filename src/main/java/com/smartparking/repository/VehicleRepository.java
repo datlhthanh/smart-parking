@@ -11,4 +11,6 @@ import com.smartparking.enums.VehicleRegistrationStatus;
 @Repository
 public interface VehicleRepository extends JpaRepository<Vehicle, Long> {
     List<Vehicle> findAllByStatus(VehicleRegistrationStatus status);
+
+    Vehicle findByLicensePlate(String licensePlate);
 }

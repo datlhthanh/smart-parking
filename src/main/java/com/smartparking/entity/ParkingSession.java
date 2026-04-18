@@ -1,8 +1,11 @@
 package com.smartparking.entity;
 
+import java.math.BigDecimal;
 import java.time.LocalDateTime;
 
 import jakarta.persistence.*;
+
+import com.smartparking.enums.ParkingSessionStatus;
 
 import lombok.*;
 import lombok.experimental.FieldDefaults;
@@ -26,7 +29,7 @@ public class ParkingSession extends BaseEntity {
 
     LocalDateTime checkOutTime;
 
-    Double totalFee;
+    BigDecimal totalFee;
 
     @Column(nullable = false, length = 20)
     String licensePlate;
@@ -36,6 +39,10 @@ public class ParkingSession extends BaseEntity {
 
     @Column(length = 255)
     String checkOutImage;
+
+    @Enumerated(EnumType.STRING)
+    @Column(nullable = false)
+    ParkingSessionStatus status;
 
     @ManyToOne
     @JoinColumn(name = "vehicle_id")

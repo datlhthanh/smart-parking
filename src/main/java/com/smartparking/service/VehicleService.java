@@ -7,7 +7,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.util.StringUtils;
 
-import com.smartparking.dto.request.RejectRequest;
+import com.smartparking.dto.request.VehicleRejectRequest;
 import com.smartparking.dto.request.VehicleRequest;
 import com.smartparking.dto.response.VehicleResponse;
 import com.smartparking.entity.User;
@@ -118,7 +118,7 @@ public class VehicleService {
     }
 
     @Transactional
-    public VehicleResponse rejectVehicle(Long id, RejectRequest request) {
+    public VehicleResponse rejectVehicle(Long id, VehicleRejectRequest request) {
         Vehicle vehicle =
                 vehicleRepository.findById(id).orElseThrow(() -> new AppException(ErrorCode.VEHICLE_NOT_FOUND));
 
