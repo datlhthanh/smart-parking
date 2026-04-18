@@ -8,14 +8,14 @@ import lombok.*;
 import lombok.experimental.FieldDefaults;
 
 @Entity
-@Table(name = "forgot_pw_tokens")
+@Table(name = "otp_tokens")
 @Getter
 @Setter
 @NoArgsConstructor
 @AllArgsConstructor
 @Builder
 @FieldDefaults(level = AccessLevel.PRIVATE)
-public class ForgotPasswordToken {
+public class OtpToken {
     @Id
     @GeneratedValue(strategy = GenerationType.UUID)
     String id;

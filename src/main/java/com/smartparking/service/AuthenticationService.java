@@ -21,8 +21,8 @@ import com.smartparking.dto.request.*;
 import com.smartparking.dto.response.IntrospectResponse;
 import com.smartparking.dto.response.LoginResponse;
 import com.smartparking.dto.response.RegisterResponse;
-import com.smartparking.entity.ForgotPasswordToken;
 import com.smartparking.entity.InvalidatedToken;
+import com.smartparking.entity.OtpToken;
 import com.smartparking.entity.Role;
 import com.smartparking.entity.User;
 import com.smartparking.enums.ErrorCode;
@@ -30,10 +30,7 @@ import com.smartparking.enums.RoleName;
 import com.smartparking.enums.UserStatus;
 import com.smartparking.exception.AppException;
 import com.smartparking.mapper.UserMapper;
-import com.smartparking.repository.ForgotPasswordTokenRepository;
-import com.smartparking.repository.InvalidatedRepository;
-import com.smartparking.repository.RoleRepository;
-import com.smartparking.repository.UserRepository;
+import com.smartparking.repository.*;
 import com.smartparking.service.validator.UserValidator;
 
 import lombok.AccessLevel;
@@ -49,7 +46,7 @@ import lombok.extern.slf4j.Slf4j;
 public class AuthenticationService {
     UserRepository userRepository;
     RoleRepository roleRepository;
-    ForgotPasswordTokenRepository forgotPasswordTokenRepository;
+    OtpTokenRepository otpTokenRepository;
     InvalidatedRepository invalidatedRepository;
 
     UserValidator userValidator;
@@ -189,12 +186,12 @@ public class AuthenticationService {
         String otp = String.format("%06d", new Random().nextInt(999999));
 
         // lưu vào DB (hạn là 5 phút)
-        ForgotPasswordToken token = ForgotPasswordToken.builder()
+        OtpToken token = OtpToken.builder()
                 .otp(otp)
                 .user(user)
                 .expiryTime(LocalDateTime.now().plusMinutes(5))
                 .build();
-        forgotPasswordTokenRepository.save(token);
+        otpTokenRepository.save(token);
 
         // gửi Email
         emailService.sendOtpEmail(user.getEmail(), otp);
@@ -208,7 +205,7 @@ public class AuthenticationService {
                 .orElseThrow(() -> new AppException(ErrorCode.USER_NOT_FOUND));
 
         // tìm Token xem có khớp với User và OTP người dùng nhập không
-        ForgotPasswordToken token = forgotPasswordTokenRepository
+        OtpToken token = otpTokenRepository
                 .findByUserAndOtp(user, request.getOtp())
                 .orElseThrow(() -> new AppException(ErrorCode.INVALID_OTP));
 
@@ -222,7 +219,7 @@ public class AuthenticationService {
         userRepository.save(user);
 
         // xóa mã đó đi (để không bị dùng lại)
-        forgotPasswordTokenRepository.delete(token);
+        otpTokenRepository.delete(token);
     }
 
     @Transactional
