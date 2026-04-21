@@ -22,14 +22,11 @@ public class ParkingZone extends BaseEntity {
     @Column(nullable = false, length = 50)
     String name; // A, B, B1, Floor 1...
 
-    @Column(nullable = false)
-    Integer capacity;
-
-    @ManyToOne
+    @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "parking_lot_id", nullable = false)
     ParkingLot parkingLot;
 
-    @ManyToOne
+    @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "vehicle_type_id", nullable = false)
     VehicleType allowedVehicleType;
 }

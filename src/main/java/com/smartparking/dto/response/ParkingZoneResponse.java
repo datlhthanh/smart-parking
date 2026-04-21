@@ -1,7 +1,5 @@
 package com.smartparking.dto.response;
 
-import java.math.BigDecimal;
-
 import com.fasterxml.jackson.annotation.JsonInclude;
 
 import lombok.*;
@@ -13,10 +11,12 @@ import lombok.experimental.FieldDefaults;
 @AllArgsConstructor
 @FieldDefaults(level = AccessLevel.PRIVATE)
 @JsonInclude(JsonInclude.Include.NON_NULL)
-public class VehicleTypeResponse {
-    Long vehicleTypeId;
+public class ParkingZoneResponse {
+    Long parkingZoneId;
 
     String name;
 
-    BigDecimal basePrice;
+    ParkingLotResponse parkingLot;
+
+    VehicleTypeResponse allowedVehicleType;
 }

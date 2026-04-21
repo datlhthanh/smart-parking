@@ -16,8 +16,8 @@ import lombok.experimental.FieldDefaults;
 public class Role extends BaseEntity {
 
     @Id
-    @Column(nullable = false, unique = true, length = 50)
-    String name; // "USER", "ADMIN",...
+    @Column(length = 20)
+    String name; // USER, ADMIN, STAFF
 
     @Column(length = 255)
     String description;

@@ -19,14 +19,17 @@ public class ParkingLot extends BaseEntity {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     Long parkingLotId;
 
-    @Column(nullable = false)
+    @Column(nullable = false, length = 100)
     String name;
 
+    @Column(nullable = false, length = 255)
     String address;
 
     Double latitude;
+
     Double longitude;
 
     @Builder.Default
+    @Column(nullable = false)
     Boolean isActive = true;
 }

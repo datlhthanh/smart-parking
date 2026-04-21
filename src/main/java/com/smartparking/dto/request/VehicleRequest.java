@@ -10,6 +10,8 @@ import lombok.experimental.FieldDefaults;
 @FieldDefaults(level = AccessLevel.PRIVATE)
 public class VehicleRequest {
     String licensePlate;
+
     String userId;
+
     Long vehicleTypeId;
 }

@@ -1,5 +1,9 @@
 package com.smartparking.controller;
 
+import java.util.List;
+
+import org.springframework.web.bind.annotation.*;
+
 import com.smartparking.dto.request.ParkingCheckInRequest;
 import com.smartparking.dto.request.ParkingCheckOutRequest;
 import com.smartparking.dto.response.ApiResponse;
@@ -7,12 +11,10 @@ import com.smartparking.dto.response.ParkingCheckInResponse;
 import com.smartparking.dto.response.ParkingCheckOutResponse;
 import com.smartparking.dto.response.ParkingSessionResponse;
 import com.smartparking.service.ParkingSessionService;
+
 import lombok.AccessLevel;
 import lombok.RequiredArgsConstructor;
 import lombok.experimental.FieldDefaults;
-import org.springframework.web.bind.annotation.*;
-
-import java.util.List;
 
 @RestController
 @RequestMapping("/parking-sessions")

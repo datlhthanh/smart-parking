@@ -7,6 +7,6 @@ import org.springframework.data.jpa.repository.JpaRepository;
 import com.smartparking.entity.OtpToken;
 import com.smartparking.entity.User;
 
-public interface OtpTokenRepository extends JpaRepository<OtpToken, Long> {
+public interface OtpTokenRepository extends JpaRepository<OtpToken, String> {
     Optional<OtpToken> findByUserAndOtp(User user, String otp);
 }

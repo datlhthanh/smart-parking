@@ -24,17 +24,17 @@ public class User extends BaseEntity {
     // sử dụng UUID làm ID, tự động sinh giá trị khi tạo mới
     @GeneratedValue(strategy = GenerationType.UUID)
     // không cập nhật, không null, độ dài tối đa 36 ký tự
-    @Column(updatable = false, nullable = false, length = 36)
+    @Column(length = 36)
     String userId;
 
     @Column(nullable = false, length = 100)
     String fullName;
 
-    @Column(unique = true, nullable = false, length = 10)
-    String phoneNumber;
-
-    @Column(unique = true, nullable = false, length = 100)
+    @Column(unique = true, nullable = false, length = 150)
     String email;
+
+    @Column(unique = true, length = 15)
+    String phoneNumber;
 
     @Column(nullable = false, length = 255)
     String password;
@@ -42,7 +42,7 @@ public class User extends BaseEntity {
     @Builder.Default
     @Enumerated(EnumType.STRING)
     @Column(nullable = false, length = 20)
-    UserStatus status = UserStatus.ACTIVE; // Enum: ACTIVE, INACTIVE, BANNED
+    UserStatus status = UserStatus.ACTIVE; // ACTIVE, INACTIVE, BANNED
 
     // cấu hình ManyToMany
     @Builder.Default

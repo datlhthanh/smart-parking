@@ -30,7 +30,11 @@ public enum ErrorCode {
     VEHICLE_CHECKED(3001, "Vehicle checked in", HttpStatus.CONFLICT),
     VEHICLE_TYPE_NULL(3002, "Vehicle type is required for guest", HttpStatus.BAD_REQUEST),
     NOT_AVAILABLE_SLOT(3003, "No available slot", HttpStatus.BAD_REQUEST),
-    ACTIVE_SESSION_NOT_FOUND(3004, "Active session not found", HttpStatus.NOT_FOUND);
+    ACTIVE_SESSION_NOT_FOUND(3004, "Active session not found", HttpStatus.NOT_FOUND),
+
+    PAYMENT_NOT_FOUND(4001, "Payment not found", HttpStatus.NOT_FOUND),
+    PAYMENT_ALREADY_PROCESSED(4002, "Payment already processed", HttpStatus.CONFLICT),
+    ;
 
     // Constructor để gán giá trị cho từng phần tử enum
     ErrorCode(int code, String message, HttpStatusCode statusCode) {

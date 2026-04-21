@@ -16,14 +16,19 @@ import lombok.experimental.FieldDefaults;
 @Builder
 @FieldDefaults(level = AccessLevel.PRIVATE)
 public class OtpToken {
+
     @Id
     @GeneratedValue(strategy = GenerationType.UUID)
+    @Column(length = 36)
     String id;
 
+    @Column(nullable = false, length = 10)
     String otp; // chứa mã 6 số
+
+    @Column(nullable = false)
     LocalDateTime expiryTime; // thời gian hết hạn
 
-    @ManyToOne
+    @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "user_id")
     User user;
 }

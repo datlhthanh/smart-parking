@@ -1,9 +1,10 @@
 package com.smartparking.dto.response;
 
+import java.math.BigDecimal;
 import java.time.LocalDateTime;
+import java.util.List;
 
 import com.fasterxml.jackson.annotation.JsonInclude;
-import com.smartparking.entity.ParkingSlot;
 import com.smartparking.enums.ParkingSessionStatus;
 
 import lombok.*;
@@ -17,13 +18,26 @@ import lombok.experimental.FieldDefaults;
 @JsonInclude(JsonInclude.Include.NON_NULL)
 public class ParkingCheckOutResponse {
     Long parkingSessionId;
-    LocalDateTime checkInTime;
-    LocalDateTime checkOutTime;
-    Double totalFee;
+
     String licensePlate;
-    String checkInImage;
-    String checkOutImage;
+
     ParkingSessionStatus status;
+
     VehicleResponse vehicle;
-    ParkingSlot parkingSlot;
+
+    ParkingSlotResponse parkingSlot;
+
+    LocalDateTime checkInTime;
+
+    LocalDateTime checkOutTime;
+
+    BigDecimal totalFee;
+
+    String checkInImage;
+
+    String checkOutImage;
+
+    Long paymentId;
+
+    List<String> availableMethods;
 }

@@ -10,6 +10,8 @@ import lombok.experimental.FieldDefaults;
 @FieldDefaults(level = AccessLevel.PRIVATE)
 public class ParkingCheckInRequest {
     String licensePlate;
-    String checkInImage;
+
     Long vehicleTypeId;
+
+    String checkInImage;
 }

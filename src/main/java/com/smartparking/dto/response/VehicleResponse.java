@@ -16,13 +16,16 @@ import lombok.experimental.FieldDefaults;
 @JsonInclude(JsonInclude.Include.NON_NULL)
 public class VehicleResponse {
     Long vehicleId;
+
     String licensePlate;
-    String color;
-    String brand;
-    String imageUrl;
-    UserResponse user;
-    VehicleTypeResponse vehicleType;
+
     VehicleRegistrationStatus status;
+
+    UserResponse user;
+
+    VehicleTypeResponse vehicleType;
+
     String rejectReason;
+
     LocalDateTime approvedAt;
 }

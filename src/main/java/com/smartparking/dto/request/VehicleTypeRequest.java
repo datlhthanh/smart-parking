@@ -1,5 +1,7 @@
 package com.smartparking.dto.request;
 
+import java.math.BigDecimal;
+
 import lombok.*;
 import lombok.experimental.FieldDefaults;
 
@@ -10,5 +12,6 @@ import lombok.experimental.FieldDefaults;
 @FieldDefaults(level = AccessLevel.PRIVATE)
 public class VehicleTypeRequest {
     String name;
-    Double basePrice;
+
+    BigDecimal basePrice;
 }

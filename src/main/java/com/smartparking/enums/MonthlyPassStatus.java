@@ -1,8 +1,8 @@
 package com.smartparking.enums;
 
-public enum ParkingSessionStatus {
-    ACTIVE,
-    COMPLETED,
+public enum MonthlyPassStatus {
     PENDING_PAYMENT,
+    ACTIVE,
+    EXPIRED,
     CANCELLED
 }

@@ -15,8 +15,12 @@ import lombok.experimental.FieldDefaults;
 @JsonInclude(JsonInclude.Include.NON_NULL)
 public class UserRegisterResponse {
     String userId;
-    String email;
+
     String fullName;
+
+    String email;
+
     String phoneNumber;
+
     Set<RoleResponse> roles;
 }

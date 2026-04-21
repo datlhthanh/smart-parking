@@ -26,18 +26,18 @@ public class Vehicle extends BaseEntity {
     @Column(nullable = false, unique = true, length = 20)
     String licensePlate;
 
-    @ManyToOne
-    @JoinColumn(name = "user_id", nullable = false)
-    User user;
-
-    @ManyToOne
-    @JoinColumn(name = "vehicle_type_id", nullable = false)
-    VehicleType vehicleType;
-
     @Builder.Default
     @Enumerated(EnumType.STRING)
     @Column(nullable = false, length = 20)
     VehicleRegistrationStatus status = VehicleRegistrationStatus.PENDING;
+
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "user_id", nullable = false)
+    User user;
+
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "vehicle_type_id", nullable = false)
+    VehicleType vehicleType;
 
     @Column(length = 500)
     String rejectReason;

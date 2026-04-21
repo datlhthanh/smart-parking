@@ -16,14 +16,17 @@ import com.smartparking.dto.response.ParkingCheckOutResponse;
 import com.smartparking.dto.response.ParkingSessionResponse;
 import com.smartparking.entity.ParkingSession;
 import com.smartparking.entity.ParkingSlot;
+import com.smartparking.entity.Payment;
 import com.smartparking.entity.Vehicle;
 import com.smartparking.enums.ErrorCode;
 import com.smartparking.enums.ParkingSessionStatus;
+import com.smartparking.enums.PaymentStatus;
 import com.smartparking.enums.SlotStatus;
 import com.smartparking.exception.AppException;
 import com.smartparking.mapper.ParkingSessionMapper;
 import com.smartparking.repository.ParkingSessionRepository;
 import com.smartparking.repository.ParkingSlotRepository;
+import com.smartparking.repository.PaymentRepository;
 import com.smartparking.repository.VehicleRepository;
 
 import lombok.AccessLevel;
@@ -39,6 +42,7 @@ public class ParkingSessionService {
     ParkingSessionRepository parkingSessionRepository;
     VehicleRepository vehicleRepository;
     ParkingSlotRepository parkingSlotRepository;
+    PaymentRepository paymentRepository;
 
     ParkingSessionMapper parkingSessionMapper;
 
@@ -90,34 +94,42 @@ public class ParkingSessionService {
 
         parkingSession.setCheckOutTime(LocalDateTime.now());
         parkingSession.setCheckOutImage(request.getCheckOutImage());
-        parkingSession.setStatus(ParkingSessionStatus.COMPLETED);
+        parkingSession.setTotalFee(calculateParkingFee(parkingSession));
+        parkingSession.setStatus(ParkingSessionStatus.PENDING_PAYMENT);
 
-        Duration duration = Duration.between(parkingSession.getCheckInTime(), parkingSession.getCheckOutTime());
+        parkingSessionRepository.save(parkingSession);
 
-        var minutes = Math.max(0, duration.toMinutes());
+        Payment payment = Payment.builder()
+                .parkingSession(parkingSession)
+                .amount(parkingSession.getTotalFee())
+                .status(PaymentStatus.PENDING)
+                .build();
+        paymentRepository.save(payment);
 
-        var basePrice = parkingSession
+        return parkingSessionMapper.toParkingCheckOutResponse(parkingSession, payment);
+    }
+
+    private BigDecimal calculateParkingFee(ParkingSession parkingSession) {
+        BigDecimal basePrice = parkingSession
                 .getParkingSlot()
                 .getParkingZone()
                 .getAllowedVehicleType()
                 .getBasePrice();
+        Duration duration = Duration.between(parkingSession.getCheckInTime(), parkingSession.getCheckOutTime());
+        long minutes = Math.max(0, duration.toMinutes());
 
+        // nếu gửi dưới 60 phút thì thu đúng giá gốc
+        if (minutes <= 60) {
+            return basePrice;
+        }
+
+        // nếu lố giờ thì mới tính tiền extra
         BigDecimal extraMinutes = BigDecimal.valueOf(minutes - 60);
-
         BigDecimal extraFee = extraMinutes
                 .divide(BigDecimal.valueOf(60), 2, RoundingMode.HALF_UP)
                 .multiply(basePrice);
 
-        var totalFee = basePrice.add(extraFee);
-
-        parkingSession.setTotalFee(totalFee);
-
-        ParkingSlot parkingSlot = parkingSession.getParkingSlot();
-        parkingSlot.setStatus(SlotStatus.AVAILABLE);
-
-        parkingSlotRepository.save(parkingSlot);
-
-        return parkingSessionMapper.toParkingCheckOutResponse(parkingSessionRepository.save(parkingSession));
+        return basePrice.add(extraFee);
     }
 
     public List<ParkingSessionResponse> getAllParkingSessions() {

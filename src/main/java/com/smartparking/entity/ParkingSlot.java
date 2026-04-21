@@ -21,17 +21,14 @@ public class ParkingSlot extends BaseEntity {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     Long parkingSlotId;
 
-    @Column(nullable = false, length = 50)
+    @Column(nullable = false, length = 20)
     String name; // A1, A2...
 
     @Enumerated(EnumType.STRING)
     @Column(nullable = false, length = 20)
-    SlotStatus status; // AVAILABLE, OCCUPIED...
+    SlotStatus status; // AVAILABLE, OCCUPIED, MAINTENANCE, DISABLED
 
-    @ManyToOne
+    @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "zone_id", nullable = false)
     ParkingZone parkingZone;
-
-    @Builder.Default
-    Boolean isEnabled = true;
 }

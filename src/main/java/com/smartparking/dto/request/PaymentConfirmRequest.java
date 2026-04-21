@@ -1,6 +1,6 @@
 package com.smartparking.dto.request;
 
-import java.util.Set;
+import com.smartparking.enums.PaymentMethod;
 
 import lombok.*;
 import lombok.experimental.FieldDefaults;
@@ -10,12 +10,10 @@ import lombok.experimental.FieldDefaults;
 @NoArgsConstructor
 @AllArgsConstructor
 @FieldDefaults(level = AccessLevel.PRIVATE)
-public class UserUpdateRequest {
-    String fullName;
+public class PaymentConfirmRequest {
+    Long paymentId;
 
-    String phoneNumber;
+    PaymentMethod method;
 
-    String password;
-
-    Set<String> roles;
+    String transactionNo;
 }
